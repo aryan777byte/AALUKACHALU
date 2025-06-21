@@ -7,20 +7,17 @@ local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
--- =====================
 -- GUI Setup
--- =====================
-
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "StylishRedzHub"
 ScreenGui.Parent = PlayerGui
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 380, 0, 460)
-MainFrame.Position = UDim2.new(0.5, -190, 0.5, -230)
+MainFrame.Size = UDim2.new(0, 320, 0, 400) -- Smaller size
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) -- Centered
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.BackgroundColor3 = Color3.fromRGB(245, 245, 245) -- White background
 MainFrame.BorderSizePixel = 0
-MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.Parent = ScreenGui
 MainFrame.ClipsDescendants = true
 
@@ -147,13 +144,9 @@ local function CreateToggle(name, default)
     return frame, function() return toggled end
 end
 
--- =====================
--- Feature Toggles
--- =====================
-
+-- Feature toggles
 local toggles = {}
 
--- Create toggles with default OFF
 toggles.autoQuestFrame, toggles.isAutoQuest = CreateToggle("Auto Quest Accept", false)
 toggles.autoFarmFrame, toggles.isAutoFarm = CreateToggle("Auto Farm", false)
 toggles.autoEquipFrame, toggles.isAutoEquip = CreateToggle("Auto Equip Weapon", true)
@@ -161,21 +154,16 @@ toggles.autoAttackFrame, toggles.isAutoAttack = CreateToggle("Auto Attack", fals
 toggles.autoTeleportFrame, toggles.isAutoTeleport = CreateToggle("Auto Teleport to Haunted Castle", false)
 toggles.autoCollectFrame, toggles.isAutoCollect = CreateToggle("Auto Collect Rewards", false)
 
--- =====================
--- Core Logic Functions
--- =====================
+-- Feature logic (placeholders)
 
 local function teleportToHauntedCastle()
-    -- Replace with your actual teleport logic for Haunted Castle
-    local targetCFrame = CFrame.new(1440, 45, -1765) -- example coordinates
+    local targetCFrame = CFrame.new(1440, 45, -1765)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         player.Character.HumanoidRootPart.CFrame = targetCFrame
     end
 end
 
 local function acceptQuest()
-    -- Your quest accept logic here
-    -- Example: Fire a RemoteEvent or invoke a remote function to accept quest
     local questEvent = ReplicatedStorage:FindFirstChild("QuestRemoteEvent")
     if questEvent then
         questEvent:FireServer()
@@ -183,16 +171,10 @@ local function acceptQuest()
 end
 
 local function farmMobs()
-    -- Your mob farming logic here, simplified example
-    -- This would include targeting mobs, attacking them, etc.
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        -- Find nearest mob and attack logic here
-    end
+    -- Add mob farming logic here
 end
 
 local function equipWeapon()
-    -- Your weapon equip logic here
-    -- Example: equip Soul Guitar or your chosen weapon
     local backpack = player:WaitForChild("Backpack")
     for _, tool in pairs(backpack:GetChildren()) do
         if tool:IsA("Tool") then
@@ -203,40 +185,30 @@ local function equipWeapon()
 end
 
 local function autoAttack()
-    -- Your auto attack logic here
-    -- For example, trigger attack animations or RemoteEvents repeatedly
+    -- Add auto attack logic here
 end
 
 local function collectRewards()
-    -- Your reward collect logic here
-    -- For example, pick up drops or claim chests
+    -- Add auto collect rewards logic here
 end
 
--- =====================
--- Loop to run toggled features
--- =====================
-
+-- Run toggled features
 RunService.Heartbeat:Connect(function()
     if toggles.isAutoTeleport() then
         teleportToHauntedCastle()
     end
-
     if toggles.isAutoQuest() then
         acceptQuest()
     end
-
     if toggles.isAutoEquip() then
         equipWeapon()
     end
-
     if toggles.isAutoFarm() then
         farmMobs()
     end
-
     if toggles.isAutoAttack() then
         autoAttack()
     end
-
     if toggles.isAutoCollect() then
         collectRewards()
     end
