@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local plr = Players.LocalPlayer
 
--- GUI Setup
+-- GUI
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "SoulGuitarGUI"
 ScreenGui.ResetOnSpawn = false
@@ -14,7 +14,6 @@ local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 220, 0, 140)
 Frame.Position = UDim2.new(0, 20, 0, 100)
 Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Frame.BorderSizePixel = 0
 Frame.Active = true
 Frame.Draggable = true
 
@@ -44,18 +43,16 @@ ToggleCorner.CornerRadius = UDim.new(0, 8)
 -- Script Logic
 local enabled = false
 
-function StartSoulQuest()
-    local args = {
-        [1] = "StartQuest",
-        [2] = "Soul Guitar",
-        [3] = 1
-    }
-    ReplicatedStorage.Remotes.CommF_:InvokeServer(unpack(args))
+local function StartSoulQuest()
+    local success, err = pcall(function()
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", "Soul Guitar", 1)
+    end)
+    if not success then warn("Quest error:", err) end
 end
 
-function SolveSoulPuzzle()
+local function SolveSoulPuzzle()
     for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("ClickDetector") and v.Parent.Name == "SoulObject" then
+        if v:IsA("ClickDetector") and v.Parent.Name:lower():find("soul") then
             pcall(function()
                 fireclickdetector(v)
             end)
@@ -64,20 +61,20 @@ function SolveSoulPuzzle()
     end
 end
 
--- Loop
-spawn(function()
-    while wait(2) do
-        if enabled then
-            StartSoulQuest()
-            wait(2)
-            SolveSoulPuzzle()
-        end
-    end
-end)
-
 -- Button Toggle
 Toggle.MouseButton1Click:Connect(function()
     enabled = not enabled
     Toggle.Text = enabled and "Soul Guitar: ON" or "Soul Guitar: OFF"
     Toggle.BackgroundColor3 = enabled and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(255, 0, 0)
+
+    if enabled then
+        spawn(function()
+            while enabled do
+                StartSoulQuest()
+                wait(2)
+                SolveSoulPuzzle()
+                wait(5)
+            end
+        end)
+    end
 end)
