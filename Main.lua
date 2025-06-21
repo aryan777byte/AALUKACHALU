@@ -10,7 +10,7 @@ local AutoFarmLevelEnabled = false
 local AutoFarmChestEnabled = false
 local SelectedMeleeTool = "Soul Guitar"
 
--- Utility Functions (same as before)
+-- Utility Functions
 local function getCurrentSea()
     local pos = humanoidRootPart.Position
     if pos.X < 0 then
@@ -52,36 +52,35 @@ local function equipTool(toolName)
 end
 
 -- GUI Creation
-
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "AALUKACHALU_Hub"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
--- Main Frame
+-- Main Frame (smaller and centered)
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 320, 0, 420)
-MainFrame.Position = UDim2.new(0.5, -160, 0.5, -210)
+MainFrame.Size = UDim2.new(0, 280, 0, 380) -- smaller size
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) -- centered
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5) -- center anchor
 MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = ScreenGui
-MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.ClipsDescendants = true
 
 -- Title
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Size = UDim2.new(1, 0, 0, 35) -- slightly smaller height
 Title.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
 Title.TextColor3 = Color3.fromRGB(0, 0, 0)
 Title.Text = "AALUKACHALU Hub"
 Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 22
+Title.TextSize = 20
 Title.Parent = MainFrame
 
 -- Tabs Container (Buttons)
 local TabsFrame = Instance.new("Frame")
 TabsFrame.Size = UDim2.new(1, 0, 0, 40)
-TabsFrame.Position = UDim2.new(0, 0, 0, 40)
+TabsFrame.Position = UDim2.new(0, 0, 0, 35)
 TabsFrame.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
 TabsFrame.Parent = MainFrame
 
@@ -91,7 +90,7 @@ local TabContents = {}
 -- Helper to create tab button
 local function createTabButton(name, posX)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 100, 1, 0)
+    btn.Size = UDim2.new(0, 90, 1, 0)
     btn.Position = UDim2.new(0, posX, 0, 0)
     btn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
     btn.TextColor3 = Color3.new(1,1,1)
@@ -105,14 +104,14 @@ end
 -- Create Tab Buttons
 local tabButtons = {}
 tabButtons["AutoFarm"] = createTabButton("Auto Farm", 0)
-tabButtons["Teleport"] = createTabButton("Teleport", 105)
-tabButtons["Melee"] = createTabButton("Melee", 210)
+tabButtons["Teleport"] = createTabButton("Teleport", 95)
+tabButtons["Melee"] = createTabButton("Melee", 190)
 
 -- Create content frames
 local function createTabContent()
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(1, 0, 1, -80)
-    frame.Position = UDim2.new(0, 0, 0, 80)
+    frame.Size = UDim2.new(1, 0, 1, -75)
+    frame.Position = UDim2.new(0, 0, 0, 75)
     frame.BackgroundTransparency = 1
     frame.Visible = false
     frame.Parent = MainFrame
@@ -197,7 +196,6 @@ end)
 -- ========== Teleport Tab Content ===========
 local teleportFrame = TabContents["Teleport"]
 
--- Label
 local teleportLabel = Instance.new("TextLabel")
 teleportLabel.Size = UDim2.new(1, -20, 0, 30)
 teleportLabel.Position = UDim2.new(0, 10, 0, 10)
@@ -209,7 +207,6 @@ teleportLabel.TextColor3 = Color3.new(0,0,0)
 teleportLabel.TextXAlignment = Enum.TextXAlignment.Left
 teleportLabel.Parent = teleportFrame
 
--- ScrollingFrame for islands
 local islandsList = Instance.new("ScrollingFrame")
 islandsList.Size = UDim2.new(1, -20, 1, -50)
 islandsList.Position = UDim2.new(0, 10, 0, 45)
@@ -224,7 +221,6 @@ UIListLayout.Parent = islandsList
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 5)
 
--- Function to update islands list
 local function updateIslands()
     islandsList:ClearAllChildren()
     local sea = getCurrentSea()
@@ -242,11 +238,8 @@ local function updateIslands()
         btn.Parent = islandsList
 
         btn.MouseButton1Click:Connect(function()
-            -- Teleport action - you must replace with your game’s teleport method
-            -- Example: fly to island position (mock position used here)
+            -- Replace below with your actual island teleport positions
             local islandPos = Vector3.new(0, 0, 0)
-            -- Ideally fetch island position from workspace or map
-            -- For demo, we just fly to a point depending on island name hash
             local hash = 0
             for c in islandName:gmatch(".") do hash = hash + c:byte() end
             islandPos = Vector3.new(hash * 5, 10, hash * 3)
@@ -254,14 +247,12 @@ local function updateIslands()
         end)
     end
 
-    -- Adjust canvas size
     local listHeight = (#islands * 45)
     islandsList.CanvasSize = UDim2.new(0, 0, 0, listHeight)
 end
 
 updateIslands()
 
--- Refresh islands every 10 seconds in case player moves sea
 spawn(function()
     while true do
         wait(10)
@@ -283,7 +274,7 @@ meleeLabel.TextColor3 = Color3.new(0,0,0)
 meleeLabel.TextXAlignment = Enum.TextXAlignment.Left
 meleeLabel.Parent = meleeFrame
 
-local meleeTools = {"Soul Guitar", "Melee Sword", "Fists"} -- Add your melee tool names here
+local meleeTools = {"Soul Guitar", "Melee Sword", "Fists"} -- Customize your tools here
 
 local meleeButtons = {}
 
@@ -301,7 +292,6 @@ for i, toolName in ipairs(meleeTools) do
     btn.MouseButton1Click:Connect(function()
         SelectedMeleeTool = toolName
         equipTool(toolName)
-        -- Update buttons colors
         for _, b in pairs(meleeButtons) do
             b.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
         end
@@ -311,10 +301,8 @@ for i, toolName in ipairs(meleeTools) do
     meleeButtons[toolName] = btn
 end
 
--- Highlight default selected tool button
 if meleeButtons[SelectedMeleeTool] then
     meleeButtons[SelectedMeleeTool].BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 end
 
--- You can expand with auto farm loops and other logic as needed here
--- This just sets up GUI tabs and core toggles with mobile-friendly buttons
+-- You can add auto farm loops and logic here triggered by the toggles
