@@ -1,5 +1,5 @@
 -- AALUKACHALU Main.lua | Redz Hub Style Script with Working GUI, Teleport Dropdown & Tween
-
+print("[AALUKACHALU] Script started!")
 local player = game.Players.LocalPlayer local TweenService = game:GetService("TweenService") local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui")) ScreenGui.Name = "AALUKACHALU_GUI" ScreenGui.ResetOnSpawn = false
 
 -- Main Frame local MainFrame = Instance.new("Frame", ScreenGui) MainFrame.Size = UDim2.new(0, 320, 0, 240) MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) MainFrame.AnchorPoint = Vector2.new(0.5, 0.5) MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) MainFrame.BorderSizePixel = 0
