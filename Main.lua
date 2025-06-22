@@ -1,158 +1,76 @@
--- // GUI & Core Loader // --
-local player = game.Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local TeleportService = game:GetService("TeleportService")
+-- AALUKACHALU Main.lua | Redz Hub Style Script with Working GUI, Teleport Dropdown & Tween
 
--- // GUI Elements // --
-local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-ScreenGui.Name = "AALUKACHALU_GUI"
+local player = game.Players.LocalPlayer local TweenService = game:GetService("TweenService") local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui")) ScreenGui.Name = "AALUKACHALU_GUI" ScreenGui.ResetOnSpawn = false
 
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 420, 0, 280)
-MainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.BorderSizePixel = 0
-MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+-- Main Frame local MainFrame = Instance.new("Frame", ScreenGui) MainFrame.Size = UDim2.new(0, 320, 0, 240) MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) MainFrame.AnchorPoint = Vector2.new(0.5, 0.5) MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) MainFrame.BorderSizePixel = 0
 
-local UICorner = Instance.new("UICorner", MainFrame)
-UICorner.CornerRadius = UDim.new(0, 10)
+local UICorner = Instance.new("UICorner", MainFrame) UICorner.CornerRadius = UDim.new(0, 10)
 
-local UIGrid = Instance.new("UIGridLayout", MainFrame)
-UIGrid.CellSize = UDim2.new(0.48, 0, 0.25, 0)
-UIGrid.CellPadding = UDim2.new(0.02, 0, 0.05, 0)
+local UIListLayout = Instance.new("UIListLayout", MainFrame) UIListLayout.Padding = UDim.new(0, 6) UIListLayout.FillDirection = Enum.FillDirection.Vertical UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
--- // Helper to Create Buttons // --
-local function createButton(name, callback, colorOff, colorOn)
-	local btn = Instance.new("TextButton", MainFrame)
-	btn.Name = name
-	btn.Text = name
-	btn.Font = Enum.Font.GothamBold
-	btn.TextColor3 = Color3.new(1, 1, 1)
-	btn.TextScaled = true
-	btn.BackgroundColor3 = colorOff
-	btn.AutoButtonColor = false
-	
-	local corner = Instance.new("UICorner", btn)
-	corner.CornerRadius = UDim.new(0, 8)
+-- Create Toggle Buttons local function createToggleButton(label, callback) local btn = Instance.new("TextButton") btn.Size = UDim2.new(0, 280, 0, 30) btn.Text = "OFF - " .. label btn.Font = Enum.Font.GothamBold btn.TextScaled = true btn.BackgroundColor3 = Color3.fromRGB(200, 0, 0) btn.TextColor3 = Color3.new(1, 1, 1) btn.AutoButtonColor = false
 
-	local toggled = false
-	btn.MouseButton1Click:Connect(function()
-		toggled = not toggled
-		btn.BackgroundColor3 = toggled and colorOn or colorOff
-		pcall(function() callback(toggled) end)
-	end)
+local corner = Instance.new("UICorner", btn)
+corner.CornerRadius = UDim.new(0, 6)
 
-	return btn
-end
-
--- // Teleport Function // --
-local function tweenTo(position)
-	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-	if hrp then
-		local goal = {}
-		goal.CFrame = CFrame.new(position)
-		TweenService:Create(hrp, TweenInfo.new(1.5, Enum.EasingStyle.Linear), goal):Play()
-	end
-end
-
--- // Auto Quest Toggle // --
-createButton("Auto Quest", function(on)
-	if on then
-		print("Auto Quest: ON")
-		-- Add your quest code
-	else
-		print("Auto Quest: OFF")
-	end
-end, Color3.fromRGB(200, 0, 0), Color3.fromRGB(0, 255, 100))
-
--- // Auto Farm Toggle // --
-createButton("Auto Farm", function(on)
-	if on then
-		print("Auto Farm: ON")
-		-- Add auto farm code
-	else
-		print("Auto Farm: OFF")
-	end
-end, Color3.fromRGB(200, 0, 0), Color3.fromRGB(0, 255, 100))
-
--- // Auto Chest Toggle // --
-createButton("Auto Chests", function(on)
-	if on then
-		print("Auto Chest: ON")
-		-- Chest farming code
-	else
-		print("Auto Chest: OFF")
-	end
-end, Color3.fromRGB(200, 0, 0), Color3.fromRGB(0, 255, 100))
-
--- // Auto Attack Toggle // --
-createButton("Auto Attack", function(on)
-	if on then
-		print("Auto Attack: ON")
-		-- Auto click or attack
-	else
-		print("Auto Attack: OFF")
-	end
-end, Color3.fromRGB(200, 0, 0), Color3.fromRGB(0, 255, 100))
-
--- // Melee Selector // --
-local tools = {}
-for _, v in ipairs(player.Backpack:GetChildren()) do
-	if v:IsA("Tool") then table.insert(tools, v.Name) end
-end
-
-local dropdown = Instance.new("TextButton", MainFrame)
-dropdown.Text = "Select Melee"
-dropdown.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-dropdown.TextColor3 = Color3.new(1, 1, 1)
-dropdown.Font = Enum.Font.Gotham
-dropdown.TextScaled = true
-local dropCorner = Instance.new("UICorner", dropdown)
-dropCorner.CornerRadius = UDim.new(0, 8)
-
-dropdown.MouseButton1Click:Connect(function()
-	print("Tools:", tools)
+local toggled = false
+btn.MouseButton1Click:Connect(function()
+    toggled = not toggled
+    btn.BackgroundColor3 = toggled and Color3.fromRGB(0, 255, 100) or Color3.fromRGB(200, 0, 0)
+    btn.Text = (toggled and "ON" or "OFF") .. " - " .. label
+    pcall(function() callback(toggled) end)
 end)
 
--- // Teleport Button // --
-createButton("Teleport Haunted", function()
-	tweenTo(Vector3.new(-9542, 140, 5762)) -- Haunted Castle location
-end, Color3.fromRGB(50, 50, 255), Color3.fromRGB(100, 255, 255))
+btn.Parent = MainFrame
+return btn
 
--- // Add Sea-Based Island Teleport Later // --
-
--- // Dynamic Script Execution (your provided logic) // --
-local Scripts = {
-	{
-		GameId = game.GameId,
-		Path = "Skull.lua"
-	}
-}
-
-local function fetcher()
-	local Url = "https://raw.githubusercontent.com/aryan777byte/AALUKACHALU/main/Main.lua"
-	local raw = game:HttpGet(Url)
-	local execute, error = loadstring(raw)
-	if type(execute) ~= "function" then
-		warn(`[2] [Executor] syntax error at {Url}\n>>{error}<<`)
-	else
-		return execute
-	end
 end
 
-local function IsPlace(Data)
-	if Data.PlacesIds and table.find(Data.PlacesIds, game.PlaceId) then
-		return true
-	elseif Data.GameId and game.GameId == Data.GameId then
-		return true
-	end
-	return false
+-- Tween teleport local function tweenTo(position) local char = player.Character or player.CharacterAdded:Wait() local hrp = char:WaitForChild("HumanoidRootPart") local goal = {CFrame = CFrame.new(position)} TweenService:Create(hrp, TweenInfo.new(1.5, Enum.EasingStyle.Linear), goal):Play() end
+
+-- Button Features createToggleButton("Auto Quest", function(on) print("Auto Quest:", on) end)
+
+createToggleButton("Auto Farm", function(on) print("Auto Farm:", on) end)
+
+createToggleButton("Auto Attack", function(on) print("Auto Attack:", on) end)
+
+createToggleButton("Auto Chest", function(on) print("Auto Chest:", on) end)
+
+-- Sea Detection local placeId = game.PlaceId local currentSea = 1 if placeId == 2753915549 then currentSea = 1 elseif placeId == 4442272183 then currentSea = 2 elseif placeId == 7449423635 then currentSea = 3 end
+
+-- Island Data local islandsBySea = { [1] = { ["Starter Island"] = Vector3.new(106, 16, 1430), ["Jungle"] = Vector3.new(-1617, 36, 145), ["Pirate Village"] = Vector3.new(-1123, 4, 3855), }, [2] = { ["Kingdom of Rose"] = Vector3.new(-393, 73, 667), ["Green Zone"] = Vector3.new(-2290, 72, -2740), ["Snow Mountain"] = Vector3.new(1400, 428, -3200), }, [3] = { ["Haunted Castle"] = Vector3.new(-9542, 141, 5762), ["Hydra Island"] = Vector3.new(5228, 200, -11072), ["Great Tree"] = Vector3.new(2337, 25, -7150), } }
+
+-- Teleport Button local teleportButton = Instance.new("TextButton") teleportButton.Size = UDim2.new(0, 280, 0, 30) teleportButton.Text = "Teleport to Island" teleportButton.Font = Enum.Font.GothamBold teleportButton.TextScaled = true teleportButton.BackgroundColor3 = Color3.fromRGB(50, 50, 255) teleportButton.TextColor3 = Color3.new(1, 1, 1) teleportButton.AutoButtonColor = false
+
+local tpCorner = Instance.new("UICorner", teleportButton) tpCorner.CornerRadius = UDim.new(0, 6) teleportButton.Parent = MainFrame
+
+-- Dropdown Frame (separate) local dropdownFrame = Instance.new("Frame", ScreenGui) dropdownFrame.Size = UDim2.new(0, 280, 0, 120) dropdownFrame.Position = UDim2.new(0.5, 0, 0.5, 140) dropdownFrame.AnchorPoint = Vector2.new(0.5, 0) dropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) dropdownFrame.Visible = false
+
+local dropCornerFrame = Instance.new("UICorner", dropdownFrame) dropCornerFrame.CornerRadius = UDim.new(0, 6)
+
+local dropLayout = Instance.new("UIListLayout", dropdownFrame) dropLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Populate Dropdown on Click teleportButton.MouseButton1Click:Connect(function() dropdownFrame.Visible = not dropdownFrame.Visible for _, child in ipairs(dropdownFrame:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+
+for name, pos in pairs(islandsBySea[currentSea]) do
+    local islandBtn = Instance.new("TextButton", dropdownFrame)
+    islandBtn.Size = UDim2.new(1, 0, 0, 30)
+    islandBtn.Text = name
+    islandBtn.Font = Enum.Font.Gotham
+    islandBtn.TextColor3 = Color3.new(1, 1, 1)
+    islandBtn.TextScaled = true
+    islandBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+    local corner = Instance.new("UICorner", islandBtn)
+    corner.CornerRadius = UDim.new(0, 6)
+
+    islandBtn.MouseButton1Click:Connect(function()
+        tweenTo(pos)
+        dropdownFrame.Visible = false
+    end)
 end
 
-for _, Data in Scripts do
-	if IsPlace(Data) then
-		return fetcher()()
-	end
-end
+end)
+
+-- Done
+
